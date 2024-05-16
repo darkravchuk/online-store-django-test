@@ -16,6 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Change directory
+      run: cd online_store
     - name: Docker compose up
       run: |
         docker-compose up
