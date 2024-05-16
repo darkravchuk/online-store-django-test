@@ -1,0 +1,37 @@
+name: Django Online Store Deploy
+
+on:
+  push:
+    branches: [ "develop" ]
+
+concurrency:
+  group: develop
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Docker compose up
+      run: |
+        docker-compose up
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
+          DJANGO_SUPERUSER_EMAIL: ${{ secrets.DJANGO_SUPERUSER_EMAIL }}
+          DJANGO_SUPERUSER_USERNAME: ${{ secrets.DJANGO_SUPERUSER_USERNAME }}
+          BRAINTREE_MERCHANT_ID: ${{ secrets.BRAINTREE_MERCHANT_ID }}
+          BRAINTREE_PUBLIC_KEY: ${{ secrets.BRAINTREE_PUBLIC_KEY }}
+          BRAINTREE_PRIVATE_KEY: ${{ secrets.BRAINTREE_PRIVATE_KEY }}
+    - name: Run Tests
+      run: |
+        docker exec -it online-store python manage.py test
+    - name: Merge to Main
+      if: success() && github.ref == 'refs/heads/develop'
+      run: |
+        git checkout main
+        git merge --no-ff develop
+        git push origin main     
