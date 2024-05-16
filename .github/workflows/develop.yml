@@ -1,4 +1,4 @@
-name: Django Online Store Deploy
+name: Django Online Store Deploying to Heroku
 
 on:
   push:
