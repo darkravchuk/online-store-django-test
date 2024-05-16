@@ -17,7 +17,7 @@ jobs:
             heroku_app_name : ${{ secrets.HEROKU_APP_NAME }}
             heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
             heroku_email_address: 'darija.kravchuk@knu.ua'
-            use_docker: true
+            use_git: true
             working-directory: ./online_store
             git_branch: main
            
