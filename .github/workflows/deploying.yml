@@ -1,0 +1,32 @@
+name: Django Online Store Deploy
+on:
+  push:
+    branches: [ "develop" ]
+  workflow_dispatch:
+
+concurrency:
+  group: develop
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and test
+    uses: ./.github/workflows/develop.yml
+
+  deploy:
+    name: Git Deploy job- A job to deploy django app to heroku using git
+    needs: build-and-test
+    runs-on: ubuntu-latest      
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: Deploy django to heroku
+          uses: nyakaz73/heroku-django-deploy@v0.68 
+          with: 
+            heroku_app_name : ${{ secrets.HEROKU_APP_NAME }}
+            heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+            heroku_email_address: 'darija.kravchuk@knu.ua'
+            use_docker: true
+            working-directory	: ./online_store
+            git_branch: main
+           
