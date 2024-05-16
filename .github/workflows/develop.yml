@@ -37,7 +37,10 @@ jobs:
     - name: Run Tests
       run: |
         cd online_store && docker compose run online-store python manage.py test
-        
+    - name: Set Git config
+      run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github Actions"    
     - name: Merge to Main
       if: success() && github.ref == 'refs/heads/develop'
       run: |
