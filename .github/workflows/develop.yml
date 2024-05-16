@@ -1,14 +1,8 @@
 name: Django Online Store Deploying to Heroku
 
 on:
-  push:
-    branches: [ "develop" ]
   workflow_call:  
   workflow_dispatch:
-
-concurrency:
-  group: develop
-  cancel-in-progress: true
 
 jobs:
   build-and-test:
