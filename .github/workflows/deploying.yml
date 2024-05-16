@@ -20,4 +20,5 @@ jobs:
             use_git: true
             working-directory: ./online_store
             git_branch: main
+            force_push: true
            
