@@ -3,7 +3,8 @@ name: Django Online Store Deploy
 on:
   push:
     branches: [ "develop" ]
-
+  workflow_dispatch:
+  
 concurrency:
   group: develop
   cancel-in-progress: true
