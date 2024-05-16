@@ -9,13 +9,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-test:
-    name: Build and test
-    uses: ./.github/workflows/develop.yml
-
   deploy:
     name: Git Deploy job- A job to deploy django app to heroku using git
-    needs: build-and-test
     runs-on: ubuntu-latest      
     steps:
         - name: Checkout
@@ -27,6 +22,6 @@ jobs:
             heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
             heroku_email_address: 'darija.kravchuk@knu.ua'
             use_docker: true
-            working-directory	: ./online_store
+            working-directory: ./online_store
             git_branch: main
            
