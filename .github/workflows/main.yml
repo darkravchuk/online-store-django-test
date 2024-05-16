@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Change directory and docker compose up
+    - name: Change directory and docker compose up -d
       run: |
         cd online_store && docker-compose up
         env:
