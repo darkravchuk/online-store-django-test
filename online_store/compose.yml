@@ -1,6 +1,5 @@
 version: '3.8'
 
-name: cicd-app
 services:
   online-store:
     container_name: online-store
