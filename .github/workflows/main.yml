@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   build-and-test:
-
+    environment: development
     runs-on: ubuntu-latest
     env:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
