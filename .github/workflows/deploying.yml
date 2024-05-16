@@ -4,10 +4,6 @@ on:
     branches: [ "develop" ]
   workflow_dispatch:
 
-concurrency:
-  group: develop
-  cancel-in-progress: true
-
 jobs:
   deploy:
     name: Git Deploy job- A job to deploy django app to heroku using git
