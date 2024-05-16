@@ -16,11 +16,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Change directory
-      run: cd online_store
-    - name: Docker compose up
+    - name: Change directory and docker compose up
       run: |
-        docker-compose up
+        cd online_store && docker-compose up
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
