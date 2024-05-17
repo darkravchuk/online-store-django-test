@@ -4,21 +4,48 @@ on:
     branches: [ "develop" ]
   workflow_dispatch:
 
+concurrency:
+  group: develop
+  cancel-in-progress: true
+
 jobs:
-  deploy:
-    name: Git Deploy job- A job to deploy django app to heroku using git
-    runs-on: ubuntu-latest      
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
+      DJANGO_SUPERUSER_EMAIL: ${{ secrets.DJANGO_SUPERUSER_EMAIL }}
+      DJANGO_SUPERUSER_USERNAME: ${{ secrets.DJANGO_SUPERUSER_USERNAME }}
+      BRAINTREE_MERCHANT_ID: ${{ secrets.BRAINTREE_MERCHANT_ID }}
+      BRAINTREE_PUBLIC_KEY: ${{ secrets.BRAINTREE_PUBLIC_KEY }}
+      BRAINTREE_PRIVATE_KEY: ${{ secrets.BRAINTREE_PRIVATE_KEY }}
     steps:
-        - name: Checkout
-          uses: actions/checkout@v2
-        - name: Deploy django to heroku
-          uses: nyakaz73/heroku-django-deploy@v0.68 
-          with: 
-            heroku_app_name : ${{ secrets.HEROKU_APP_NAME }}
-            heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-            heroku_email_address: 'darija.kravchuk@knu.ua'
-            use_git: true
-            working-directory: ./online_store
-            git_branch: main
-            force_push: true
-           
+    - uses: actions/checkout@v4
+    - name: Export Environment Variables
+      run: |
+        cd online_store
+        echo -n "SECRET_KEY=" >> .env
+        echo "$SECRET_KEY" >> .env
+        echo -n "BRAINTREE_MERCHANT_ID=" >> .env
+        echo "$BRAINTREE_MERCHANT_ID" >> .env
+        echo -n "BRAINTREE_PUBLIC_KEY=" >> .env
+        echo "$BRAINTREE_PUBLIC_KEY" >> .env
+        echo -n "BRAINTREE_PRIVATE_KEY=" >> .env
+        echo "$BRAINTREE_PRIVATE_KEY" >> .env
+    - name: Run Tests
+      run: |
+        docker compose run online-store python manage.py test
+    - name: Set Git config
+      run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Action Runner"
+    - name: Merge to Main
+      if: success() && github.ref == 'refs/heads/develop'
+      run: |
+        git fetch --unshallow
+        git checkout main
+        git pull
+        git merge --no-ff develop
+        git push origin main
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
